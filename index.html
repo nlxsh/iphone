@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Video Generator</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,"Noto Sans Bengali",sans-serif;background:linear-gradient(135deg,#081225,#102a43);color:#fff;min-height:100vh}.container{max-width:900px;margin:auto;padding:22px}.hero{text-align:center;padding:25px 10px}.hero h1{font-size:clamp(28px,6vw,46px);margin:10px 0;background:linear-gradient(90deg,#38bdf8,#a78bfa);-webkit-background-clip:text;color:transparent}.hero p{color:#cbd5e1}.card{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:22px;margin:18px 0;box-shadow:0 12px 35px #0003}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px}label{display:block;margin-bottom:7px;font-weight:bold;color:#dbeafe}input,select,textarea{width:100%;padding:13px;border:1px solid #475569;border-radius:10px;background:#0f2036;color:#fff;font-size:15px;outline:none}textarea{resize:vertical;min-height:110px}button{border:0;border-radius:10px;padding:13px 18px;font-size:15px;font-weight:bold;cursor:pointer;margin:6px 4px 0 0;background:#38bdf8;color:#062033}button:hover{opacity:.88}button:disabled{opacity:.5;cursor:not-allowed}.secondary{background:#a78bfa;color:#fff}.dark{background:#334155;color:#fff}.output{white-space:pre-wrap;line-height:1.7;background:#07111f;border:1px solid #334155;padding:18px;border-radius:12px;min-height:100px;color:#e2e8f0}.status{margin-top:12px;padding:14px;border-radius:10px;background:#07111f;color:#bae6fd;white-space:pre-wrap}.video{width:100%;border-radius:12px;margin-top:15px;background:#000}.badge{display:inline-block;background:#164e63;color:#67e8f9;padding:6px 12px;border-radius:30px;font-size:13px}footer{text-align:center;color:#94a3b8;padding:25px;font-size:13px}
+</style>
+</head>
+<body>
+<div class="container">
+<section class="hero"><span class="badge">AI CREATIVE STUDIO</span><h1>AI Video Generator</h1><p>Prompt তৈরি করুন এবং Runway API-এর মাধ্যমে ভিডিও জেনারেট করুন</p></section>
+
+<div class="card">
+<h2>🎬 ভিডিওর তথ্য</h2>
+<div class="grid">
+<div><label>ভিডিওর বিষয়</label><input id="topic" placeholder="যেমন: মিশরের পিরামিডের অজানা ইতিহাস"></div>
+<div><label>ভিডিও স্টাইল</label><select id="style"><option>Documentary</option><option>Cinematic</option><option>Realistic</option><option>Motivational</option><option>Historical</option><option>Animation</option><option>Futuristic</option></select></div>
+<div><label>Aspect Ratio</label><select id="ratio"><option value="16:9">16:9</option><option value="9:16">9:16</option><option value="1:1">1:1</option><option value="4:3">4:3</option></select></div>
+<div><label>ভিডিও দৈর্ঘ্য</label><select id="duration"><option value="5">5 seconds</option><option value="10">10 seconds</option></select></div>
+<div><label>মডেল</label><select id="model"><option value="gen4.5">Runway Gen-4.5</option><option value="gen4_turbo">Runway Gen-4 Turbo</option></select></div>
+<div><label>ভয়েসওভার ভাষা</label><select id="voice"><option>Bangla</option><option>English</option><option>No voiceover</option></select></div>
+</div><br>
+<label>অতিরিক্ত নির্দেশনা</label><textarea id="extra" placeholder="যেমন: cinematic lighting, dramatic music, no watermark"></textarea>
+<button onclick="makePrompt()">✨ Prompt তৈরি করুন</button>
+<button class="secondary" onclick="demo()">ডেমো</button>
+</div>
+
+<div class="card"><h2>📝 English Video Prompt</h2><div id="prompt" class="output">এখানে Prompt দেখা যাবে...</div><button onclick="copyPrompt()">📋 Copy Prompt</button></div>
+
+<div class="card">
+<h2>🎥 Generate Video</h2>
+<p>Generate বাটনে চাপলে আপনার নিরাপদ Backend Runway API-তে অনুরোধ পাঠাবে।</p>
+<button id="generateBtn" onclick="generateVideo()">🎬 Generate Video</button>
+<div id="status" class="status">ভিডিও তৈরির স্ট্যাটাস এখানে দেখা যাবে।</div>
+<div id="result"></div>
+</div>
+<footer>AI Video Generator • API key is kept on the server</footer>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+function makePrompt(){
+ const topic=$('topic').value.trim(); if(!topic){alert('ভিডিওর বিষয় লিখুন');return}
+ const prompt=`Create a high-quality ${$('style').value} video about "${topic}".\n\nVisual style: cinematic, ${$('style').value.toLowerCase()}, detailed, professional.\nAspect ratio: ${$('ratio').value}.\nDuration: ${$('duration').value} seconds.\nCamera: smooth cinematic camera movement, establishing shot, medium shot and close-up where appropriate.\nLighting: natural, dramatic and visually consistent.\nMotion: realistic subject movement, environmental motion and professional pacing.\nMood: engaging, informative and emotionally compelling.\nAvoid: blurry frames, distorted anatomy, random text, logos, watermarks and unwanted objects.\n${$('extra').value ? 'Additional instructions: '+$('extra').value : ''}`;
+ $('prompt').textContent=prompt;
+}
+function demo(){$('topic').value='ইতিহাসের ১০টি অবিশ্বাস্য ঘটনা';$('style').value='Documentary';$('ratio').value='16:9';$('duration').value='5';$('model').value='gen4.5';$('voice').value='Bangla';$('extra').value='cinematic lighting, dramatic atmosphere, no watermark';makePrompt()}
+function copyPrompt(){if($('prompt').textContent.includes('এখানে')){alert('আগে Prompt তৈরি করুন');return}navigator.clipboard.writeText($('prompt').textContent).then(()=>alert('Prompt কপি হয়েছে'))}
+async function generateVideo(){
+ if($('prompt').textContent.includes('এখানে')){makePrompt();if($('prompt').textContent.includes('এখানে'))return}
+ $('generateBtn').disabled=true;$('status').textContent='⏳ Runway API-তে অনুরোধ পাঠানো হচ্ছে...';$('result').innerHTML='';
+ try{
+  const res=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:$('prompt').textContent,model:$('model').value,ratio:$('ratio').value,duration:Number($('duration').value)})});
+  const data=await res.json();if(!res.ok)throw new Error(data.error||'Request failed');
+  $('status').textContent='✅ ভিডিও তৈরি হয়েছে।';$('result').innerHTML=`<video class="video" controls src="${data.videoUrl}"></video><br><a href="${data.videoUrl}" target="_blank"><button class="secondary">ভিডিও খুলুন / সংরক্ষণ করুন</button></a>`;
+ }catch(e){$('status').textContent='❌ '+e.message}
+ finally{$('generateBtn').disabled=false}
+}
+</script>
+</body></html>
